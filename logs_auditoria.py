@@ -1,33 +1,90 @@
-#registro logs
-from datetime import datetime
+from conexao import conectar
+from mysql.connector import Error
 
 
-def registrar_log(mensagem):
-  
-    data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+def registrar_log(tipo, descricao):
 
-    with open("logs ocorrencia.txt", "a", encoding="utf-8") as arquivo:
-        arquivo.write(f"[{data_hora}] {mensagem}\n")
+    conexao = conectar()
+    cursor = conexao.cursor()
 
+    try:
 
-#--------------------------------------------------------------------------
-#mostrar logs
+        sql = "INSERT INTO log (tipo, descricao) VALUES (%s, %s)"
+
+        valores = (tipo, descricao)
+
+        cursor.execute(sql, valores)
+
+        conexao.commit()
+
+    except Error as erro:
+        print("Erro ao registrar log:", erro)
+
+    cursor.close()
+    conexao.close()
+
 
 def exibir_logs():
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
     try:
-        with open('logs ocorrencia.txt', 'r', encoding='utf-8') as arquivo:
-            conteudo = arquivo.read()
 
-            if conteudo.strip():
-                print('\n=== LOGS DE OCORRÊNCIAS ===')
-                print(conteudo)
-            else:
-                print('Nenhum log registrado.')
+        cursor.execute("SELECT * FROM log")
 
-    except FileNotFoundError:
-        print('Arquivo de logs não encontrado.')
+        logs = cursor.fetchall()
+
+        if len(logs) == 0:
+            print("Nenhum log encontrado.")
+            return
+
+        print("\n=== LOGS DE OCORRÊNCIAS ===")
+
+        for log in logs:
+
+            print("ID:", log[0])
+            print("Tipo:", log[1])
+            print("Descrição:", log[2])
+            print("Data/Hora:", log[3])
+            print("-------------------")
+
+    except Error as erro:
+        print("Erro ao exibir logs:", erro)
+
+    cursor.close()
+    conexao.close()
 
 
 def exibir_protocolos():
-    print('\n=== PROTOCOLOS DE VOTAÇÃO ===')
-    print('Funcionalidade ainda não implementada.')
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    try:
+
+        print("\n=== PROTOCOLOS DE VOTAÇÃO ===")
+
+        cursor.execute(
+            "SELECT protocolo, data_hora FROM votos"
+        )
+
+        protocolos = cursor.fetchall()
+
+        if len(protocolos) == 0:
+            print("Nenhum protocolo encontrado.")
+            return
+
+        for protocolo in protocolos:
+
+            codigo = protocolo[0]
+            data = protocolo[1]
+
+            print("\nProtocolo:", codigo)
+            print("Data/Hora:", data)
+
+    except Error as erro:
+        print("Erro ao mostrar protocolos:", erro)
+
+    cursor.close()
+    conexao.close()

@@ -1,6 +1,12 @@
 from logs_auditoria import exibir_logs, exibir_protocolos
+
+
 def menu_auditoria():
-    while True:
+
+    opcao = ""
+
+    while opcao != "0":
+
         print('\nVocê Entrou no Modo Auditoria')
         print('Modo Auditoria')
         print('1- Mostrar logs de Ocorrências')
@@ -11,10 +17,15 @@ def menu_auditoria():
 
         if opcao == '1':
             exibir_logs()
+
         elif opcao == '2':
             exibir_protocolos()
+
         elif opcao == '0':
             print('Retornando...')
-            break   
+
         else:
+
             print('Opção invalida... Tente Novamente')
+
+            print('Opção inválida... Tente Novamente') 

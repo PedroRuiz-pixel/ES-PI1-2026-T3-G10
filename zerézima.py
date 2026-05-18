@@ -1,24 +1,41 @@
-votos = []
+from conexao import conectar
+from mysql.connector import Error
 
+def zeresima():
 
-def zerezima():
-    votos.clear()
+    conexao = conectar()
+    cursor = conexao.cursor()
 
-    for c in candidatos:
-        c["votos"] = 0
+    try:
 
-    for e in eleitores:
-        e["status"] = "Não votou"
+        print("\n=== ZERÉSIMA ===")
 
-    print("\n=== ZERÉZIMA ===")
-    print("Todos os votos foram zerados.")
-    print("Lista de candidatos com total de votos igual a zero:")
+        cursor.execute("SELECT * FROM candidatos")
+        candidatos = cursor.fetchall()
 
-    if not candidatos:
-        print("Nenhum candidato cadastrado.")
-        return
+        if len(candidatos) == 0:
+            print("Nenhum candidato encontrado.")
+            return
 
-    for c in candidatos:
-        print(f"Nome: {c['nome']} | Número: {c['numero']} | Partido: {c['partido']} | Votos: {c['votos']}")
+        cursor.execute("SELECT COUNT(*) FROM votos")
+        total_votos = cursor.fetchone()[0]
 
-    print("Zerézima realizada com sucesso!")
+        for candidato in candidatos:
+
+            nome = candidato[1]
+            numero = candidato[2]
+            partido = candidato[3]
+
+            print("Nome:", nome)
+            print("Número:", numero)
+            print("Partido:", partido)
+            print("Votos: 0")
+            print("-------------------")
+
+        print("\nTotal de votos:", total_votos)
+
+    except Error as erro:
+        print("Erro ao gerar zerésima:", erro)
+
+    cursor.close()
+    conexao.close()

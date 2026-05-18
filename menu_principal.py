@@ -1,7 +1,10 @@
 from mysql.connector import Error
 from conexao import conectar
 import random
+import conexao
 from menu_auditoria import menu_auditoria
+from zerézima import zeresima
+from logs_auditoria import registrar_log
 
 # ================= ELEITORES =================
 
@@ -142,6 +145,12 @@ def cadastrar_eleitor():
         conexao.commit()
 
         print("Eleitor cadastrado com sucesso!")
+
+        registrar_log(
+        "Cadastro",
+        "Eleitor " + nome + " cadastrado"
+        )
+
         print("Chave de Acesso:", chave_acesso)
 
     except Error as erro:
@@ -231,13 +240,31 @@ def editar_eleitor():
         novo_nome = input("Novo nome: ")
         novo_titulo = input("Novo título: ")
 
+        mesario = input("Mesário (S/N): ").upper()
+
+        if mesario == "S":
+            mesario = True
+
+        elif mesario == "N":
+            mesario = False
+
+        else:
+            print("Digite apenas S ou N.")
+            return
+
         cursor.execute(
-            "UPDATE eleitores SET nome=%s, titulo=%s WHERE cpf=%s",
-            (novo_nome, novo_titulo, cpf)
+            "UPDATE eleitores SET nome=%s, titulo_eleitor=%s, mesario=%s WHERE cpf=%s",
+            (novo_nome, novo_titulo, mesario, cpf)
         )
+
         conexao.commit()
 
         print("Eleitor atualizado com sucesso!")
+
+        registrar_log(
+            "Edição",
+            "Eleitor " + novo_nome + " editado"
+        )
 
     except Error as erro:
         print("Erro ao editar eleitor:", erro)
@@ -254,14 +281,24 @@ def remover_eleitor():
 
     try:
         cursor.execute("SELECT * FROM eleitores WHERE cpf = %s", (cpf,))
-        if len(cursor.fetchall()) == 0:
+
+        dados = cursor.fetchall()
+
+        if len(dados) == 0:
             print("Eleitor não encontrado.")
             return
+
+        nome = dados[0][1]
 
         cursor.execute("DELETE FROM eleitores WHERE cpf = %s", (cpf,))
         conexao.commit()
 
         print("Eleitor removido com sucesso!")
+
+        registrar_log(
+            "Remoção",
+            "Eleitor " + nome + " removido"
+        )
 
     except Error as erro:
         print("Erro ao remover eleitor:", erro)
@@ -306,86 +343,182 @@ candidatos = []
 
 
 def cadastrar_candidato():
-    
+
     nome = input("Nome do candidato: ")
     numero = input("Número do candidato: ")
     partido = input("Partido: ")
 
-    for c in candidatos:
-        if c["numero"] == numero:
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    try:
+
+        cursor.execute(
+            "SELECT * FROM candidatos WHERE numero = %s",
+            (numero,)
+        )
+
+        if len(cursor.fetchall()) > 0:
             print("Erro: Já existe candidato com esse número!")
             return
 
-    candidato = {
-        "nome": nome,
-        "numero": numero,
-        "partido": partido
-    }
+        sql = """
+        INSERT INTO candidatos
+        VALUES (NULL, %s, %s, %s)
+        """
 
-    candidatos.append(candidato)
-    print("Candidato cadastrado com sucesso!")
+        valores = (nome, numero, partido)
+
+        cursor.execute(sql, valores)
+        conexao.commit()
+
+        print("Candidato cadastrado com sucesso!")
+
+        registrar_log(
+        "Cadastro",
+        "Candidato " + nome + " cadastrado" )
+                                        
+    except Error as erro:
+        print("Erro ao cadastrar candidato:", erro)
+
+    cursor.close()
+    conexao.close()
 
 
 def listar_candidatos():
-   
-    if not candidatos:
-        print("Nenhum candidato cadastrado.")
-        return
+    conexao = conectar()
+    cursor = conexao.cursor()
 
-    print("\nLista de candidatos:")
-    for c in candidatos:
-        print(f"Nome: {c['nome']} | Número: {c['numero']} | Partido: {c['partido']}")
+    try:
+        cursor.execute("SELECT * FROM candidatos")
+        dados = cursor.fetchall()
 
+        if len(dados) == 0:
+            print("Nenhum candidato cadastrado.")
+            return
+        
+        for candidato in dados:
+
+                print("\nID:", candidato[0])
+                print("Nome:", candidato[1])
+                print("Número:", candidato[2])
+                print("Partido:", candidato[3])
+                print("----------------------")
+
+    except Error as erro:
+        print("Erro ao listar candidatos:", erro)
+
+    cursor.close()
+    conexao.close()
 
 def buscar_candidato():
-  
     numero = input("Digite o número do candidato: ")
 
-    for c in candidatos:
-        if c["numero"] == numero:
-            print("Candidato encontrado:")
-            print(f"Nome: {c['nome']} | Número: {c['numero']} | Partido: {c['partido']}")
-            return
+    conexao = conectar()
+    cursor = conexao.cursor()
 
-    print("Candidato não encontrado.")
+    try:
+        cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
+
+        dados = cursor.fetchall()
+
+        if len(dados) == 0:
+            print("Candidato não encontrado.")
+            return
+        
+        candidato = dados[0]
+
+        print("\nID:", candidato[0])
+        print("Nome:", candidato[1])
+        print("Número:", candidato[2])
+        print("Partido:", candidato[3]) 
+        print("----------------------")
+        
+    except Error as erro:
+        print("Erro ao buscar candidato:", erro)
+
+    cursor.close()
+    conexao.close()
 
 
 def editar_candidato():
  
-    numero = input("Digite o número do candidato para editar: ")
+    numero = input("Digite o número do candidato que deseja editar: ")
 
-    for c in candidatos:
-        if c["numero"] == numero:
-            novo_nome = input("Novo nome do candidato: ")
-            novo_numero = input("Novo número do candidato: ")
-            novo_partido = input("Novo partido: ")
+    conexao = conectar()
+    cursor = conexao.cursor()
 
-            for candidato in candidatos:
-                if candidato["numero"] == novo_numero and candidato != c:
-                    print("Erro: Já existe candidato com esse número!")
-                    return
+    try:
+        cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
+        dados = cursor.fetchall()
 
-            c["nome"] = novo_nome
-            c["numero"] = novo_numero
-            c["partido"] = novo_partido
-
-            print("Candidato editado com sucesso!")
+        if len(dados) == 0:
+            print("Candidato não encontrado.")
             return
 
-    print("Candidato não encontrado.")
+        novo_nome = input("Novo nome: ")
+        novo_numero = input("Novo número: ")
+        novo_partido = input("Novo partido: ")
+
+        sql = """
+        UPDATE candidatos
+        SET nome = %s,
+        numero = %s,
+        partido = %s
+        WHERE numero = %s
+        """
+
+        valores = (novo_nome, novo_numero, novo_partido, numero)
+
+        cursor.execute(sql, valores)
+        
+        conexao.commit()
+
+        print("Candidato atualizado com sucesso!")
+
+        registrar_log(
+            "Edição",
+            "Candidato " + novo_nome + " editado" )
+    
+    except Error as erro:
+        print("Erro ao editar candidato:", erro)
+
+    cursor.close()
+    conexao.close()
 
 
 def remover_candidato():
   
-    numero = input("Digite o número do candidato para remover: ")
+    numero = input("Digite o número do candidato que deseja remover: ")
 
-    for c in candidatos:
-        if c["numero"] == numero:
-            candidatos.remove(c)
-            print("Candidato removido com sucesso!")
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
+
+        dados = cursor.fetchall()
+        nome = dados[0][1]
+
+        if len(dados) == 0:
+            print("Candidato não encontrado.")
             return
+        
+        cursor.execute("DELETE FROM candidatos WHERE numero = %s", (numero,))
+        
+        conexao.commit()
 
-    print("Candidato não encontrado.")
+        print("Candidato removido com sucesso!")
+
+        registrar_log(
+            "Remoção",
+            "Candidato " + nome + " removido" )
+
+    except Error as erro:
+        print("Erro ao remover candidato:", erro)
+    
+    cursor.close()
+    conexao.close()
 
 
 def menu_candidato():
@@ -469,30 +602,116 @@ def cadastrar_mesario():
 
 
 def validar_mesario(titulo, cpf_inicio, chave):
-    for eleitor in eleitores:
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    try:
+
+        cursor.execute(
+            "SELECT * FROM eleitores WHERE titulo_eleitor = %s",
+            (titulo,)
+        )
+
+        dados = cursor.fetchall()
+
+        if len(dados) == 0:
+            cursor.close()
+            conexao.close()
+            return False
+
+        eleitor = dados[0]
+
+        cpf = eleitor[3]
+        mesario = eleitor[4]
+        chave_banco = eleitor[5]
+
         if (
-            eleitor["titulo"] == titulo and
-            eleitor["cpf_inicio"] == cpf_inicio and
-            eleitor["chave"] == chave and
-            eleitor["mesario"] == True
+            cpf[0:4] == cpf_inicio and
+            chave == chave_banco and
+            mesario == 1
         ):
+            cursor.close()
+            conexao.close()
             return True
-    return False
+
+        cursor.close()
+        conexao.close()
+        return False
+
+    except Error as erro:
+        print("Erro ao validar mesário:", erro)
+
+        cursor.close()
+        conexao.close()
+
+        return False
 
 
-def zeresima():
-    votos_registrados.clear()
+def votar():
+    cpf = input("Digite o seu CPF: ")
 
-    for candidato in candidatos:
-        candidato["votos"] = 0
+    conexao = conectar()
+    cursor = conexao.cursor()
+    try:
+        cursor.execute(
+        "SELECT * FROM eleitores WHERE cpf = %s", (cpf,))
 
-    print("\n=== ZERÉSIMA ===")
+        dados = cursor.fetchall()
 
-    if not candidatos:
-        print("Nenhum candidato cadastrado.")
-    else:
-        for candidato in candidatos:
-            print(f"Número: {candidato['numero']} | Votos: 0")
+        if len(dados) == 0:
+            print("Eleitor não encontrado.")
+            return
+    
+        eleitor = dados[0]
+
+        if eleitor[6] == 1:
+            print("Eleitor já votou.")
+            return
+    
+        cursor.execute("SELECT * FROM candidatos")
+
+        candidatos_banco = cursor.fetchall()
+
+        if len(candidatos_banco) == 0:
+            print("Nenhum candidato cadastrado.")
+            return
+
+        for candidato in candidatos_banco:
+         print("\nID:", candidato[0])
+         print("Nome:", candidato[1])
+         print("Número:", candidato[2])
+
+        numero = input("\nDigite o número do candidato que deseja votar: ")
+
+        cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
+
+        candidatos = cursor.fetchall()
+
+        if len(candidatos) == 0:
+            print("Candidato não encontrado.")
+            return
+    
+        candidato_id = candidatos[0][0]
+
+        cursor.execute(
+         "INSERT INTO votos (candidato_id, data_hora, protocolo) VALUES (%s, NOW(), UUID())", (candidato_id,))
+    
+        cursor.execute("UPDATE eleitores SET ja_votou = 1 WHERE cpf = %s", (cpf,))
+
+        conexao.commit()
+
+        print("Voto registrado com sucesso!")
+
+        registrar_log(
+            "Voto",
+            "Eleitor com CPF " + cpf + " realizou votação" ) 
+
+    except Error as erro:
+        print("Erro ao registrar voto:", erro)
+
+    cursor.close()
+    conexao.close()
 
 
 def menu_urna():
@@ -506,9 +725,16 @@ def menu_urna():
         opcao = input("Escolha: ")
 
         if opcao == "1":
-            print("Função votar ainda não implementada")
+            votar()
+
         elif opcao == "2":
             print("Encerrando votação...")
+
+            registrar_log(
+            "Encerramento",
+            "Sistema de votação encerrado"
+            )
+
         else:
             print("Opção inválida!")
 
@@ -522,6 +748,10 @@ def abrir_votacao():
 
     if validar_mesario(titulo, cpf_inicio, chave):
         print("Acesso liberado!")
+        registrar_log(
+            "Abertura",
+            "Sistema de votação aberto por mesário"
+                )
         zeresima()
         menu_urna()
     else:
@@ -553,7 +783,47 @@ def menu_abertura_votacao():
 # ================= RESULTADOS =================
 
 def menu_resultados():
-    print("\nResultados da votação")
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    try:
+
+        print("\n=== RESULTADOS DA VOTAÇÃO ===")
+
+        sql = """
+        SELECT candidatos.nome,
+               candidatos.numero,
+               COUNT(votos.id)
+        FROM candidatos
+        LEFT JOIN votos
+        ON candidatos.id = votos.candidato_id
+        GROUP BY candidatos.id
+        """
+
+        cursor.execute(sql)
+
+        resultados = cursor.fetchall()
+
+        if len(resultados) == 0:
+            print("Nenhum resultado encontrado.")
+            return
+
+        for resultado in resultados:
+
+            nome = resultado[0]
+            numero = resultado[1]
+            total = resultado[2]
+
+            print("\nNome:", nome)
+            print("Número:", numero)
+            print("Total de votos:", total)
+
+    except Error as erro:
+        print("Erro ao mostrar resultados:", erro)
+
+    cursor.close()
+    conexao.close()
 
 
 # ================= VOTAÇÃO =================
