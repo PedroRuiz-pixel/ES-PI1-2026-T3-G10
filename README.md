@@ -1,4 +1,4 @@
-# PROJETO-INTEGRADOR-GRUPO-10
+# Grupo 10 - ES-PI1-2026-T3
 GRUPO 10 - SALA 3 
 
 ##Descrição do projeto:
