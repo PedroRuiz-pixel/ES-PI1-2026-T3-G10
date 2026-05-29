@@ -38,6 +38,14 @@ O sistema simula um processo de votação digital em ambiente terminal, com foco
 ##Como executar o sistema:
 py menu_principal.py
 
+##Estrutura do projeto:
+- `menu_principal.py`: arquivo principal para iniciar o sistema.
+- `menus/`: menus de navegação do sistema.
+- `database/`: conexão com o banco de dados.
+- `auditoria/`: logs, auditoria e protocolos.
+- `votacao/`: funções de votação que não são menus, como a zerésima.
+- `Criptografia/`: arquivos relacionados à criptografia.
+
 ###Pré requisitos:
 -Pyhton3 instalado
 -MySQL instalado e em execução

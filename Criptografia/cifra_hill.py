@@ -3,10 +3,12 @@ MODULO = len(ALFABETO)
 
 
 def limpar_texto(texto):
+
     texto = texto.upper()
     resultado = ""
 
     for caractere in texto:
+
         if caractere in ALFABETO:
             resultado += caractere
 
@@ -14,6 +16,7 @@ def limpar_texto(texto):
 
 
 def texto_para_numeros(texto):
+
     numeros = []
 
     for caractere in texto:
@@ -23,6 +26,7 @@ def texto_para_numeros(texto):
 
 
 def numeros_para_texto(numeros):
+
     texto = ""
 
     for numero in numeros:
@@ -32,13 +36,22 @@ def numeros_para_texto(numeros):
 
 
 def multiplicar_matriz_vetor(matriz, vetor):
-    resultado_1 = (matriz[0][0] * vetor[0] + matriz[0][1] * vetor[1]) % MODULO
-    resultado_2 = (matriz[1][0] * vetor[0] + matriz[1][1] * vetor[1]) % MODULO
+
+    resultado_1 = (
+        matriz[0][0] * vetor[0] +
+        matriz[0][1] * vetor[1]
+    ) % MODULO
+
+    resultado_2 = (
+        matriz[1][0] * vetor[0] +
+        matriz[1][1] * vetor[1]
+    ) % MODULO
 
     return [resultado_1, resultado_2]
 
 
 def cifrar_hill(texto):
+
     chave = [
         [5, 7],
         [2, 3]
@@ -53,14 +66,17 @@ def cifrar_hill(texto):
     criptografado = []
 
     for i in range(0, len(numeros), 2):
+
         bloco = [numeros[i], numeros[i + 1]]
         bloco_cifrado = multiplicar_matriz_vetor(chave, bloco)
+
         criptografado.extend(bloco_cifrado)
 
     return numeros_para_texto(criptografado)
 
 
 def decifrar_hill(texto):
+
     chave_inversa = [
         [3, 29],
         [34, 5]
@@ -72,17 +88,10 @@ def decifrar_hill(texto):
     descriptografado = []
 
     for i in range(0, len(numeros), 2):
+
         bloco = [numeros[i], numeros[i + 1]]
         bloco_decifrado = multiplicar_matriz_vetor(chave_inversa, bloco)
+
         descriptografado.extend(bloco_decifrado)
 
-    return numeros_para_texto(descriptografado)
-
-
-mensagem = input("Digite a mensagem: ")
-
-mensagem_cifrada = cifrar_hill(mensagem)
-print("Mensagem cifrada:", mensagem_cifrada)
-
-mensagem_decifrada = decifrar_hill(mensagem_cifrada)
-print("Mensagem decifrada:", mensagem_decifrada)
+    return numeros_para_texto(descriptografado).rstrip("X")

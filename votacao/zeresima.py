@@ -1,5 +1,6 @@
-from conexao import conectar
 from mysql.connector import Error
+from database.conexao import conectar
+
 
 def zeresima():
 
@@ -9,6 +10,9 @@ def zeresima():
     try:
 
         print("\n=== ZERÉSIMA ===")
+
+        cursor.execute("DELETE FROM votos WHERE id > 0")
+        conexao.commit()
 
         cursor.execute("SELECT * FROM candidatos")
         candidatos = cursor.fetchall()
