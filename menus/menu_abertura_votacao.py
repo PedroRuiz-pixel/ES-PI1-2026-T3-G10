@@ -6,24 +6,61 @@ from auditoria.logs_auditoria import registrar_log
 from votacao.zeresima import zeresima
 from Criptografia.cifra_hill import cifrar_hill, decifrar_hill
 
-def gerar_protocolo(cursor):
+def gerar_protocolo(cursor, numero_candidato):
 
-    protocolo = str(random.randint(100000, 999999))
+    letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    letra1 = random.choice(letras)
+    letra2 = random.choice(letras)
+
+    ano = "26"
+
+    if numero_candidato is None:
+        numero_formatado = "00"
+    else:
+        numero_formatado = str(numero_candidato).zfill(2)
+
+    aleatorio = str(random.randint(0, 99999)).zfill(5)
+
+    protocolo = (
+        "V" +
+        letra1 +
+        letra2 +
+        ano +
+        numero_formatado +
+        aleatorio
+    )
+
+    protocolo_criptografado = cifrar_hill(protocolo)
 
     cursor.execute(
         "SELECT * FROM votos WHERE protocolo = %s",
-        (protocolo,)
+        (protocolo_criptografado,)
     )
 
     dados = cursor.fetchall()
 
     while len(dados) > 0:
 
-        protocolo = str(random.randint(100000, 999999))
+        letra1 = random.choice(letras)
+        letra2 = random.choice(letras)
+
+        aleatorio = str(random.randint(0, 99999)).zfill(5)
+
+        protocolo = (
+            "V" +
+            letra1 +
+            letra2 +
+            ano +
+            numero_formatado +
+            aleatorio
+        )
+
+        protocolo_criptografado = cifrar_hill(protocolo)
 
         cursor.execute(
             "SELECT * FROM votos WHERE protocolo = %s",
-            (protocolo,)
+            (protocolo_criptografado,)
         )
 
         dados = cursor.fetchall()
@@ -170,7 +207,16 @@ def votar():
                 else:
                     print("Voto cancelado. Digite novamente.")
 
-        protocolo = gerar_protocolo(cursor)
+        if candidato_id is None:
+            numero_protocolo = None
+        else:
+            numero_protocolo = candidato[0][2]
+
+        protocolo = gerar_protocolo(
+            cursor,
+            numero_protocolo
+        )
+
         protocolo_criptografado = cifrar_hill(protocolo)
 
         sql = """

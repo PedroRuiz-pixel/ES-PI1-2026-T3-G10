@@ -2,7 +2,8 @@ from mysql.connector import Error
 from database.conexao import conectar
 import random
 
-from Criptografia.cifra_hill import cifrar_hill
+from Criptografia.cifra_hill import cifrar_hill, decifrar_hill
+
 
 def gerar_chave_acesso(nome):
 
@@ -66,6 +67,7 @@ def validar_cpf(cpf):
 
 
 def validar_titulo(titulo):
+
     titulo_limpo = ""
 
     for c in titulo:
@@ -118,6 +120,7 @@ def validar_titulo(titulo):
 
 
 def limpar_numeros(texto):
+
     numeros = ""
 
     for c in texto:
@@ -152,7 +155,7 @@ def cadastrar_eleitor():
 
     if not validar_cpf(cpf):
         return
-    
+
     cpf_criptografado = cifrar_hill(cpf)
 
     mesario = input("Mesário (S/N): ").upper()
@@ -171,7 +174,7 @@ def cadastrar_eleitor():
 
     if chave_acesso == "":
         return
-    
+
     chave_criptografada = cifrar_hill(chave_acesso)
 
     conexao = conectar()
@@ -180,12 +183,12 @@ def cadastrar_eleitor():
     try:
 
         cursor.execute(
-            "SELECT * FROM eleitores WHERE cpf = %s",
-            (cpf_criptografado,)
+            "SELECT * FROM eleitores WHERE cpf = %s OR Titulo_eleitor = %s",
+            (cpf_criptografado, titulo)
         )
 
         if len(cursor.fetchall()) > 0:
-            print("Erro: CPF já cadastrado.")
+            print("Erro: CPF ou título já cadastrado.")
             return
 
         sql = """
@@ -194,12 +197,12 @@ def cadastrar_eleitor():
         """
 
         valores = (
-        nome,
-        titulo,
-        cpf_criptografado,
-        mesario,
-        chave_criptografada,
-        False
+            nome,
+            titulo,
+            cpf_criptografado,
+            mesario,
+            chave_criptografada,
+            False
         )
 
         cursor.execute(sql, valores)
@@ -207,7 +210,6 @@ def cadastrar_eleitor():
         conexao.commit()
 
         print("Eleitor cadastrado com sucesso!")
-
         print("Chave de acesso:", chave_acesso)
 
     except Error as erro:
@@ -237,9 +239,9 @@ def listar_eleitores():
             print("\nID:", eleitor[0])
             print("Nome:", eleitor[1])
             print("Título:", eleitor[2])
-            print("CPF:", eleitor[3])
+            print("CPF:", decifrar_hill(eleitor[3]))
             print("Mesário:", "Sim" if eleitor[4] == 1 else "Não")
-            print("Chave:", eleitor[5])
+            print("Chave:", decifrar_hill(eleitor[5]))
             print("Já votou:", "Sim" if eleitor[6] == 1 else "Não")
             print("----------------------")
 
@@ -254,6 +256,9 @@ def buscar_eleitor():
 
     cpf = input("Digite o CPF do eleitor: ")
 
+    cpf = limpar_numeros(cpf)
+    cpf_criptografado = cifrar_hill(cpf)
+
     conexao = conectar()
     cursor = conexao.cursor()
 
@@ -261,7 +266,7 @@ def buscar_eleitor():
 
         cursor.execute(
             "SELECT * FROM eleitores WHERE cpf = %s",
-            (cpf,)
+            (cpf_criptografado,)
         )
 
         dados = cursor.fetchall()
@@ -275,9 +280,9 @@ def buscar_eleitor():
         print("\nID:", eleitor[0])
         print("Nome:", eleitor[1])
         print("Título:", eleitor[2])
-        print("CPF:", eleitor[3])
+        print("CPF:", decifrar_hill(eleitor[3]))
         print("Mesário:", "Sim" if eleitor[4] == 1 else "Não")
-        print("Chave:", eleitor[5])
+        print("Chave:", decifrar_hill(eleitor[5]))
         print("Já votou:", "Sim" if eleitor[6] == 1 else "Não")
 
     except Error as erro:
@@ -291,6 +296,9 @@ def editar_eleitor():
 
     cpf = input("Digite o CPF do eleitor: ")
 
+    cpf = limpar_numeros(cpf)
+    cpf_criptografado = cifrar_hill(cpf)
+
     conexao = conectar()
     cursor = conexao.cursor()
 
@@ -298,7 +306,7 @@ def editar_eleitor():
 
         cursor.execute(
             "SELECT * FROM eleitores WHERE cpf = %s",
-            (cpf,)
+            (cpf_criptografado,)
         )
 
         dados = cursor.fetchall()
@@ -310,6 +318,11 @@ def editar_eleitor():
         novo_nome = input("Novo nome: ")
 
         novo_titulo = input("Novo título: ")
+
+        if not validar_titulo(novo_titulo):
+            return
+
+        novo_titulo = limpar_numeros(novo_titulo)
 
         mesario = input("Mesário (S/N): ").upper()
 
@@ -335,7 +348,7 @@ def editar_eleitor():
             novo_nome,
             novo_titulo,
             mesario,
-            cpf
+            cpf_criptografado
         )
 
         cursor.execute(sql, valores)
@@ -355,6 +368,9 @@ def remover_eleitor():
 
     cpf = input("Digite o CPF do eleitor: ")
 
+    cpf = limpar_numeros(cpf)
+    cpf_criptografado = cifrar_hill(cpf)
+
     conexao = conectar()
     cursor = conexao.cursor()
 
@@ -362,7 +378,7 @@ def remover_eleitor():
 
         cursor.execute(
             "SELECT * FROM eleitores WHERE cpf = %s",
-            (cpf,)
+            (cpf_criptografado,)
         )
 
         dados = cursor.fetchall()
@@ -373,7 +389,7 @@ def remover_eleitor():
 
         cursor.execute(
             "DELETE FROM eleitores WHERE cpf = %s",
-            (cpf,)
+            (cpf_criptografado,)
         )
 
         conexao.commit()

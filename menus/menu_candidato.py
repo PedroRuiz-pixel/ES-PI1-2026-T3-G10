@@ -136,6 +136,15 @@ def editar_candidato():
         novo_numero = input("Novo número: ")
         novo_partido = input("Novo partido: ")
 
+        cursor.execute(
+            "SELECT * FROM candidatos WHERE numero = %s AND numero != %s",
+            (novo_numero, numero)
+        )
+
+        if len(cursor.fetchall()) > 0:
+            print("Já existe candidato com esse número.")
+            return
+
         sql = """
         UPDATE candidatos
         SET nome = %s,
