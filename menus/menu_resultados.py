@@ -3,6 +3,16 @@ from database.conexao import conectar
 
 
 def boletim_urna():
+    """
+    Exibe o boletim de urna com os votos de cada candidato,
+    quantidade de votos nulos e o candidato vencedor.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     conexao = conectar()
     cursor = conexao.cursor()
@@ -67,6 +77,17 @@ def boletim_urna():
 
 
 def estatistica_comparecimento():
+    """
+    Exibe a quantidade de eleitores aptos,
+    eleitores que votaram e o percentual
+    de comparecimento da votação.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     conexao = conectar()
     cursor = conexao.cursor()
@@ -104,6 +125,16 @@ def estatistica_comparecimento():
 
 
 def votos_por_partido():
+    """
+    Exibe a quantidade total de votos
+    recebidos por cada partido político.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     conexao = conectar()
     cursor = conexao.cursor()
@@ -145,6 +176,17 @@ def votos_por_partido():
 
 
 def validacao_integridade():
+    """
+    Verifica a integridade da votação comparando
+    a quantidade de votos registrados com o número
+    de eleitores marcados como votantes.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     conexao = conectar()
     cursor = conexao.cursor()
@@ -181,6 +223,20 @@ def validacao_integridade():
 
 
 def menu_resultados():
+    """
+    Exibe o menu de resultados da votação.
+
+    Permite acessar o boletim de urna,
+    estatísticas de comparecimento,
+    votos por partido e validação
+    de integridade do sistema.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     opcao = ""
 

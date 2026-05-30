@@ -3,6 +3,15 @@ from menus.menu_votacao import menu_votacao
 
 
 def menu_principal():
+    """
+    Exibe o menu principal do sistema de votação.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     opcao = ""
 

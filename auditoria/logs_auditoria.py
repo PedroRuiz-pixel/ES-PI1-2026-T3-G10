@@ -8,6 +8,15 @@ ARQUIVO_LOGS = Path(__file__).with_name("logs_ocorrencias.txt")
 
 
 def registrar_log(mensagem):
+    """
+    Registra uma ocorrência do sistema no arquivo de logs.
+
+    Args:
+        mensagem (str): Mensagem que descreve a ocorrência registrada.
+
+    Returns:
+        None.
+    """
 
     data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -19,6 +28,15 @@ def registrar_log(mensagem):
 
 
 def exibir_logs():
+    """
+    Exibe no terminal os registros armazenados no arquivo de logs.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     try:
 
@@ -46,6 +64,15 @@ def exibir_logs():
 
 
 def exibir_protocolos():
+    """
+    Exibe os protocolos de votação registrados no banco de dados.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     conexao = conectar()
     cursor = conexao.cursor()

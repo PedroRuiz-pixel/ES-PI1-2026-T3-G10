@@ -5,6 +5,19 @@ except ModuleNotFoundError:
 
 
 def conectar():
+    """
+    Realiza a conexão com o banco de dados MySQL.
+
+    Returns:
+        mysql.connector.connection:
+        Objeto de conexão com o banco de dados.
+
+    Raises:
+        ModuleNotFoundError:
+        Caso a biblioteca mysql-connector-python
+        não esteja instalada.
+    """
+
     try:
         import mysql.connector
     except ModuleNotFoundError:
@@ -19,4 +32,5 @@ def conectar():
         database="projeto_integrador",
         port=3306
     )
+
     return conexao

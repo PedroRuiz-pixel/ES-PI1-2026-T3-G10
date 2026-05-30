@@ -3,6 +3,15 @@ MODULO = len(ALFABETO)
 
 
 def limpar_texto(texto):
+    """
+    Remove caracteres inválidos e converte o texto para letras maiúsculas.
+
+    Args:
+        texto (str): Texto original que será tratado.
+
+    Returns:
+        str: Texto contendo apenas caracteres presentes no alfabeto permitido.
+    """
 
     texto = texto.upper()
     resultado = ""
@@ -16,6 +25,15 @@ def limpar_texto(texto):
 
 
 def texto_para_numeros(texto):
+    """
+    Converte cada caractere do texto em seu índice numérico no alfabeto.
+
+    Args:
+        texto (str): Texto que será convertido para números.
+
+    Returns:
+        list: Lista de números correspondentes aos caracteres do texto.
+    """
 
     numeros = []
 
@@ -26,6 +44,15 @@ def texto_para_numeros(texto):
 
 
 def numeros_para_texto(numeros):
+    """
+    Converte uma lista de números em texto usando o alfabeto definido.
+
+    Args:
+        numeros (list): Lista de números que será convertida para texto.
+
+    Returns:
+        str: Texto gerado a partir dos números informados.
+    """
 
     texto = ""
 
@@ -36,6 +63,16 @@ def numeros_para_texto(numeros):
 
 
 def multiplicar_matriz_vetor(matriz, vetor):
+    """
+    Multiplica uma matriz 2x2 por um vetor de dois elementos.
+
+    Args:
+        matriz (list): Matriz 2x2 usada na operação.
+        vetor (list): Vetor com dois valores numéricos.
+
+    Returns:
+        list: Lista com dois números resultantes da multiplicação modular.
+    """
 
     resultado_1 = (
         matriz[0][0] * vetor[0] +
@@ -51,6 +88,15 @@ def multiplicar_matriz_vetor(matriz, vetor):
 
 
 def cifrar_hill(texto):
+    """
+    Criptografa um texto utilizando o método da Cifra de Hill.
+
+    Args:
+        texto (str): Texto original que será criptografado.
+
+    Returns:
+        str: Texto criptografado pela Cifra de Hill.
+    """
 
     chave = [
         [5, 7],
@@ -76,6 +122,15 @@ def cifrar_hill(texto):
 
 
 def decifrar_hill(texto):
+    """
+    Descriptografa um texto criptografado com a Cifra de Hill.
+
+    Args:
+        texto (str): Texto criptografado que será descriptografado.
+
+    Returns:
+        str: Texto descriptografado.
+    """
 
     chave_inversa = [
         [3, 29],

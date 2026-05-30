@@ -3,6 +3,15 @@ from menus.menu_candidato import menu_candidato
 
 
 def menu_gerenciamento():
+    """
+    Exibe o menu de gerenciamento de eleitores e candidatos.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     opcao = ""
 

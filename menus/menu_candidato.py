@@ -3,11 +3,18 @@ from database.conexao import conectar
 
 
 def cadastrar_candidato():
+    """
+    Cadastra um novo candidato no banco de dados.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     nome = input("Nome do candidato: ")
-
     numero = input("Número do candidato: ")
-
     partido = input("Partido: ")
 
     conexao = conectar()
@@ -49,6 +56,15 @@ def cadastrar_candidato():
 
 
 def listar_candidatos():
+    """
+    Lista todos os candidatos cadastrados no banco de dados.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     conexao = conectar()
     cursor = conexao.cursor()
@@ -79,6 +95,15 @@ def listar_candidatos():
 
 
 def buscar_candidato():
+    """
+    Busca um candidato pelo número de votação.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     numero = input("Digite o número do candidato: ")
 
@@ -113,6 +138,15 @@ def buscar_candidato():
 
 
 def editar_candidato():
+    """
+    Edita os dados de um candidato cadastrado.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     numero = input("Número do candidato: ")
 
@@ -174,6 +208,15 @@ def editar_candidato():
 
 
 def remover_candidato():
+    """
+    Remove um candidato cadastrado no banco de dados.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     numero = input("Número do candidato: ")
 
@@ -210,6 +253,15 @@ def remover_candidato():
 
 
 def menu_candidato():
+    """
+    Exibe o menu de gerenciamento de candidatos.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     opcao = ""
 

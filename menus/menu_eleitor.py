@@ -6,6 +6,15 @@ from Criptografia.cifra_hill import cifrar_hill, decifrar_hill
 
 
 def gerar_chave_acesso(nome):
+    """
+    Gera uma chave de acesso para o eleitor a partir do nome informado.
+
+    Args:
+        nome (str): Nome completo do eleitor.
+
+    Returns:
+        str: Chave de acesso gerada para o eleitor.
+    """
 
     partes = nome.strip().upper().split()
 
@@ -26,6 +35,15 @@ def gerar_chave_acesso(nome):
 
 
 def validar_cpf(cpf):
+    """
+    Valida um CPF utilizando o cálculo dos dígitos verificadores.
+
+    Args:
+        cpf (str): CPF contendo 11 dígitos numéricos.
+
+    Returns:
+        bool: True se o CPF for válido, False caso contrário.
+    """
 
     if cpf == cpf[0] * 11:
         print("CPF inválido.")
@@ -67,6 +85,15 @@ def validar_cpf(cpf):
 
 
 def validar_titulo(titulo):
+    """
+    Valida um título de eleitor utilizando os dígitos verificadores.
+
+    Args:
+        titulo (str): Número do título de eleitor informado pelo usuário.
+
+    Returns:
+        bool: True se o título for válido, False caso contrário.
+    """
 
     titulo_limpo = ""
 
@@ -120,6 +147,15 @@ def validar_titulo(titulo):
 
 
 def limpar_numeros(texto):
+    """
+    Remove caracteres não numéricos de um texto.
+
+    Args:
+        texto (str): Texto que pode conter números e outros caracteres.
+
+    Returns:
+        str: Texto contendo apenas os números encontrados.
+    """
 
     numeros = ""
 
@@ -131,6 +167,18 @@ def limpar_numeros(texto):
 
 
 def cadastrar_eleitor():
+    """
+    Cadastra um novo eleitor no banco de dados.
+
+    Realiza validação de CPF e título, gera chave de acesso,
+    criptografa os dados sensíveis e salva o eleitor no banco.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     nome = input("Nome: ")
 
@@ -220,6 +268,17 @@ def cadastrar_eleitor():
 
 
 def listar_eleitores():
+    """
+    Lista todos os eleitores cadastrados no banco de dados.
+
+    Exibe CPF e chave de acesso descriptografados para visualização.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     conexao = conectar()
     cursor = conexao.cursor()
@@ -253,6 +312,18 @@ def listar_eleitores():
 
 
 def buscar_eleitor():
+    """
+    Busca um eleitor pelo CPF informado.
+
+    O CPF digitado é criptografado antes da consulta
+    para comparação com o valor armazenado no banco.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     cpf = input("Digite o CPF do eleitor: ")
 
@@ -293,6 +364,18 @@ def buscar_eleitor():
 
 
 def editar_eleitor():
+    """
+    Edita os dados de um eleitor cadastrado.
+
+    Localiza o eleitor pelo CPF, valida o novo título
+    e atualiza nome, título e indicação de mesário.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     cpf = input("Digite o CPF do eleitor: ")
 
@@ -365,6 +448,18 @@ def editar_eleitor():
 
 
 def remover_eleitor():
+    """
+    Remove um eleitor cadastrado no banco de dados.
+
+    O eleitor é localizado pelo CPF informado pelo usuário,
+    que é criptografado antes da consulta.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     cpf = input("Digite o CPF do eleitor: ")
 
@@ -404,6 +499,18 @@ def remover_eleitor():
 
 
 def menu_eleitor():
+    """
+    Exibe o menu de gerenciamento de eleitores.
+
+    Permite cadastrar, editar, remover, buscar
+    e listar eleitores cadastrados.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     opcao = ""
 

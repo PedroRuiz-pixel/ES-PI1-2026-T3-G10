@@ -4,6 +4,18 @@ from menus.menu_resultados import menu_resultados
 
 
 def menu_votacao():
+    """
+    Exibe o menu principal da votação.
+
+    Permite acessar a abertura da votação,
+    auditoria e resultados do sistema.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     opcao = ""
 

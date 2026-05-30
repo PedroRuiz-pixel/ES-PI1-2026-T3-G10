@@ -1,8 +1,16 @@
 from auditoria.logs_auditoria import exibir_logs, exibir_protocolos
 
 
-
 def menu_auditoria():
+    """
+    Exibe o menu de auditoria do sistema de votação.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
 
     opcao = ""
 
