@@ -34,7 +34,7 @@ O sistema simula um processo de votação digital em ambiente terminal, com foco
 ##Funcionalidades já implementadas:
 - Reposiório github criado
 - Read.me inical
-- - Ligação de Python com o Banco de Dados
+- Ligação de Python com o Banco de Dados
 - Banco de Dados Criado
 - Validador de Cpf
 - Validador de Título de Eleitor
@@ -42,12 +42,24 @@ O sistema simula um processo de votação digital em ambiente terminal, com foco
 - Autêntificação de Mesário
 - Encerramento de Votação
 - Zerézima
-- Menus Criados
+- Menu Principal
+- Menu Gerenciamento
+- Menu de Eleitor
+- Menu Candidatos
+- Menu Votação
+- Menu Abertura de Votação
+- Menu Auditoria
+- Menu Resultados
 - Listagem de Eleitores
+- Criptografia e Descriptografia
 - Cifra Hill
 - Busca de Eleitor
 - Cadastro de Eleitor
 - Logs Implementados
+- Estatísticas de Comparecimento
+- Boletim de Urna
+- Validação de Integridade
+- Release Final
 
 ##Como executar o sistema:
 py menu_principal.py
